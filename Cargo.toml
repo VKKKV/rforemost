@@ -1,0 +1,13 @@
+[package]
+name = "rforemost"
+version = "0.1.0"
+authors = ["vkkkv"]
+description = "A modern, high-performance file carver written in Rust, inspired by foremost."
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.101"
+byteorder = "1.5.0"
+clap = { version = "4.5.59", features = ["derive"] }
+memmap2 = "0.9.10"
+rayon = "1.11.0"
