@@ -69,47 +69,35 @@ fn main() -> Result<()> {
     let chunk_size = 1024 * 1024; // 1MB chunks
     let total_len = mmap.len();
 
-        (0..total_len)
-            .into_par_iter()
-            .step_by(chunk_size)
-            .for_each(|chunk_start| {
-                let data = &mmap[..];
-                
-                for offset in chunk_start..std::cmp::min(chunk_start + chunk_size, total_len) {
-                    // Quick check: skip if the current byte doesn't match any known header start.
-                    if !first_bytes[data[offset] as usize] {
-                        continue;
-                    }
-    
-                                    for carver in &carvers {
-    
-                                        if carver.matches_header(data, offset)
-    
-                                            && let Some(size) = carver.extract(data, offset)
-    
-                                        {
-    
-                                            let file_data = &data[offset..offset + size];
-    
-                                            let filename = format!("file_{:08}.{}", offset, carver.extension());
-    
-                                            let path = args.output.join(filename);
-    
-                    
-    
-                                            if let Err(e) = save_file(&path, file_data) {
-    
-                                                eprintln!("Error saving file at offset {}: {}", offset, e);
-    
-                                            }
-    
-                                        }
-    
-                                    }
-    
-                    
+    (0..total_len)
+        .into_par_iter()
+        .step_by(chunk_size)
+        .for_each(|chunk_start| {
+            let data = &mmap[..];
+
+            for offset in chunk_start..std::cmp::min(chunk_start + chunk_size, total_len) {
+                // Quick check: skip if the current byte doesn't match any known header start.
+                if !first_bytes[data[offset] as usize] {
+                    continue;
                 }
-            });
-        println!("Scan complete. Recovered files are in {:?}", args.output);
+
+                for carver in &carvers {
+                    if carver.matches_header(data, offset)
+                        && let Some(size) = carver.extract(data, offset)
+                    {
+                        let file_data = &data[offset..offset + size];
+
+                        let filename = format!("file_{:08}.{}", offset, carver.extension());
+
+                        let path = args.output.join(filename);
+
+                        if let Err(e) = save_file(&path, file_data) {
+                            eprintln!("Error saving file at offset {}: {}", offset, e);
+                        }
+                    }
+                }
+            }
+        });
+    println!("Scan complete. Recovered files are in {:?}", args.output);
     Ok(())
 }
