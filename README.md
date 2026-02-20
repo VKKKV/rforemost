@@ -20,8 +20,8 @@ A modern, high-performance file carver written in Rust, inspired by the classic 
 Ensure you have Rust and Cargo installed.
 
 ```bash
-git clone https://github.com/vkkkv/foremost-rust.git
-cd foremost-rust
+git clone https://github.com/vkkkv/rforemost.git
+cd rforemost
 cargo build --release
 ```
 
